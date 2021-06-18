@@ -1,0 +1,15 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Torian257x\\RubWrap\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Torian257x\\RubWrap\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  }
+}
