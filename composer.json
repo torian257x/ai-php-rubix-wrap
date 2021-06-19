@@ -11,5 +11,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9"
+  },
+  "require": {
+    "rubix/ml": "^1.0"
   }
 }
