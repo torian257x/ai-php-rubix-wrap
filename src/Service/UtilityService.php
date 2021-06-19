@@ -4,24 +4,24 @@
 namespace Torian257x\RubWrap\Service;
 
 
-
-
 class UtilityService
 {
 
   /**
-   * @param iterable<array> $iterable
-   * @return iterable<array>
+   * @param array<array> $array
+   * @return array<array>
    */
-  public static function sortToEnd(iterable $iterable, $key_sort_to_end): iterable{
+  public static function getLabelsFromSamples(array $data, $key_of_label): array
+  {
 
-    foreach($iterable as &$row){
-      $t = $row[$key_sort_to_end];
-      unset($row[$key_sort_to_end]);
-      $row[$key_sort_to_end] = $t;
+    $labels = [];
+
+    foreach ($data as $key => &$row) {
+      $labels[] = $row[$key_of_label];
+      unset($row[$key_of_label]);
     }
 
-    return $iterable;
+    return [$data, $labels];
   }
 
 }

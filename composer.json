@@ -13,6 +13,6 @@
     "phpunit/phpunit": "^9"
   },
   "require": {
-    "rubix/ml": "^1.0"
+    "rubix/ml": "dev-master"
   }
 }

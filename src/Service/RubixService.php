@@ -4,9 +4,9 @@
 namespace Torian257x\RubWrap\Service;
 
 
-use iterable;
 use Rubix\ML\Classifiers\KDNeighbors;
 use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Estimator;
 use Rubix\ML\Extractors\ColumnPicker;
 use Rubix\ML\Extractors\CSV;
@@ -22,16 +22,17 @@ use Rubix\ML\Transformers\Transformer;
 
 class RubixService
 {
+  const MODEL_PATH = __DIR__ . '/ai_output/model_trained.rbx';
 
 
   /**
-   * @param iterable $data make array iterable by doing $myiterable = new ArrayObject( ['a','b'] );
+   * @param array<array> $data make array iterable by doing $myiterable = new ArrayObject( ['a','b'] );
    * @param Estimator|null $estimator_algorithm
    * @param Transformer[]|null $transformers
    * @param mixed $data_index_w_label the number/string of the index of the data to be trained
    */
   public static function train(
-      iterable $data,
+      array $data,
       $data_index_w_label,
       Estimator $estimator_algorithm = null,
       array $transformers = null
@@ -39,14 +40,12 @@ class RubixService
     ini_set('memory_limit', '-1');
 
 
-    uksort($data, function($a , $b){
-
-    });
+    [$samples, $labels] = UtilityService::getLabelsFromSamples($data, $data_index_w_label);
 
     $logger = new Screen("TrainData");
 
 
-    $dataset = Labeled::fromIterator($data);
+    $dataset = new Labeled($samples, $labels);
 
     if (is_null($estimator_algorithm)) {
       $estimator_algorithm = new KDNeighbors();
@@ -65,20 +64,30 @@ class RubixService
             $transformers
             , $estimator_algorithm
         ),
-        new Filesystem(__DIR__ . '/ai_output/model_trained.rbx')
+        new Filesystem(self::MODEL_PATH)
     );
 
 
-    $estimator->setLogger($logger);
+//    $estimator->setLogger($logger);
 
     $estimator->train($dataset);
 
-    $extractor = new CSV(__DIR__ . '/ai_output/progress.csv', true);
+//    $extractor = new CSV(__DIR__ . '/ai_output/progress.csv', true);
 
-    $extractor->export($estimator->steps());
+//    $extractor->export($estimator->steps());
 
-    $logger->info('Progress saved to progress.csv');
+//    $logger->info('Progress saved to progress.csv');
 
     $estimator->save();
+    return $estimator->trained();
+  }
+
+
+  public static function predict(array $input_data)
+  {
+    $input_data = new Unlabeled($input_data);
+    $estimator = PersistentModel::load(new Filesystem(self::MODEL_PATH));
+    $prediction = $estimator->predict($input_data);
+    return $prediction;
   }
 }

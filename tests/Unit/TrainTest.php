@@ -35,7 +35,10 @@ class TrainTest extends \PHPUnit\Framework\TestCase
         ]
     );
 
-    RubixService::train($data, 'iris_plant_type');
+    $data = iterator_to_array($data->getIterator());
+//    RubixService::train($data->getIterator(), 'iris_plant_type');
+    $is_trained = RubixService::train($data, 'iris_plant_type');
+    self::assertTrue($is_trained);
 
   }
 
