@@ -21,6 +21,7 @@ class UtilityService
       unset($row[$key_of_label]);
     }
 
+
     return [$data, $labels];
   }
 

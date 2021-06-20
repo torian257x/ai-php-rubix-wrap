@@ -5,6 +5,10 @@ namespace Torian257x\RubWrap\Service;
 
 
 use Rubix\ML\Classifiers\KDNeighbors;
+use Rubix\ML\CrossValidation\Metrics\FBeta;
+use Rubix\ML\CrossValidation\Metrics\Informedness;
+use Rubix\ML\CrossValidation\Metrics\MCC;
+use Rubix\ML\CrossValidation\Reports\ErrorAnalysis;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Estimator;
@@ -44,6 +48,8 @@ class RubixService
 
     $logger = new Screen("TrainData");
 
+    $logger->info('Starting to train');
+
 
     $dataset = new Labeled($samples, $labels);
 
@@ -67,27 +73,67 @@ class RubixService
         new Filesystem(self::MODEL_PATH)
     );
 
-
-//    $estimator->setLogger($logger);
-
     $estimator->train($dataset);
 
-//    $extractor = new CSV(__DIR__ . '/ai_output/progress.csv', true);
-
-//    $extractor->export($estimator->steps());
-
-//    $logger->info('Progress saved to progress.csv');
-
     $estimator->save();
+    $logger->info('Finished training');
+
     return $estimator->trained();
   }
 
 
-  public static function predict(array $input_data)
+  /**
+   * @param array[] $input_data 2 dimensional array WIHTOUT label (e.g. without the value you want to predict)
+   * @return mixed[]
+   */
+  public static function predict(array $input_data): array
   {
     $input_data = new Unlabeled($input_data);
+
     $estimator = PersistentModel::load(new Filesystem(self::MODEL_PATH));
+
     $prediction = $estimator->predict($input_data);
+
     return $prediction;
+  }
+
+
+  public static function getErrorAnalysis(array $samples_w_labels, $key_for_labels){
+
+    [$samples, $labels] = UtilityService::getLabelsFromSamples($samples_w_labels, $key_for_labels);
+
+
+    $logger = new Screen('ErrorAnalysis');
+
+    $dataset = new Unlabeled($samples);
+
+
+
+    $estimator = PersistentModel::load(new Filesystem(self::MODEL_PATH));
+
+    $logger->info('Starting Error Analysis');
+
+    $predictions = $estimator->predict($dataset);
+
+
+    if(is_numeric($predictions[0])){
+      $report = new ErrorAnalysis();
+      $results = $report->generate($predictions, $labels);
+    }else{
+      $metric = new FBeta(0.7);
+      $fbeta = $metric->score($predictions, $labels);
+
+      $metric = new MCC();
+      $mcc = $metric->score($predictions, $labels);
+
+      $metric = new Informedness();
+      $informedness = $metric->score($predictions, $labels);
+
+
+      $results = compact('fbeta', 'mcc', 'informedness');
+    }
+
+    return $results;
+
   }
 }
