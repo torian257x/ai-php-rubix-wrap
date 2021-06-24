@@ -23,6 +23,7 @@ use Rubix\ML\Transformers\NumericStringConverter;
 use Rubix\ML\Transformers\OneHotEncoder;
 use Rubix\ML\Transformers\PolynomialExpander;
 use Rubix\ML\Transformers\Transformer;
+use Rubix\ML\Transformers\ZScaleStandardizer;
 
 class RubixService
 {
@@ -64,6 +65,7 @@ class RubixService
       $transformers = [
           new NumericStringConverter(),
           new MissingDataImputer(),
+          new ZScaleStandardizer(),
       ];
     }
 
@@ -90,6 +92,10 @@ class RubixService
    */
   public static function predict(array $input_data): array
   {
+
+    if(is_array($input_data) && !is_array($input_data[0])){
+      $input_data = [$input_data];
+    }
 
     $logger = new Screen("Predict Data");
 
