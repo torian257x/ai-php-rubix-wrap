@@ -34,24 +34,27 @@ class RubixService
    * @param Estimator|null $estimator_algorithm
    * @param Transformer[]|null $transformers
    * @param mixed $data_index_w_label the number/string of the index of the data to be trained
+   * @return bool whether training was successful
    */
   public static function train(
       array $data,
-      $data_index_w_label,
+      mixed $data_index_w_label,
       Estimator $estimator_algorithm = null,
       array $transformers = null
-  ) {
+  ):bool {
     ini_set('memory_limit', '-1');
-
-
-    [$samples, $labels] = UtilityService::getLabelsFromSamples($data, $data_index_w_label);
 
     $logger = new Screen("TrainData");
 
     $logger->info('Starting to train');
 
 
-    $dataset = new Labeled($samples, $labels);
+    if($data_index_w_label){
+      [$samples, $labels] = UtilityService::getLabelsFromSamples($data, $data_index_w_label);
+      $dataset = new Labeled($samples, $labels);
+    }else{
+      $dataset = new Unlabeled($data);
+    }
 
     if (is_null($estimator_algorithm)) {
       $estimator_algorithm = new KDNeighbors();
@@ -61,7 +64,6 @@ class RubixService
       $transformers = [
           new NumericStringConverter(),
           new MissingDataImputer(),
-          //                new OneHotEncoder(),
       ];
     }
 
@@ -88,6 +90,11 @@ class RubixService
    */
   public static function predict(array $input_data): array
   {
+
+    $logger = new Screen("Predict Data");
+
+    $logger->info('Starting prediction');
+
     $input_data = new Unlabeled($input_data);
 
     $estimator = PersistentModel::load(new Filesystem(self::MODEL_PATH));
