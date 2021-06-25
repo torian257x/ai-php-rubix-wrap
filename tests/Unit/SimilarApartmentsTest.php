@@ -15,6 +15,7 @@ use Rubix\ML\Extractors\CSV;
 use Rubix\ML\Kernels\Distance\Canberra;
 use Rubix\ML\Kernels\Distance\Cosine;
 use Rubix\ML\Kernels\Distance\Diagonal;
+use Rubix\ML\Kernels\Distance\Gower;
 use Rubix\ML\Kernels\Distance\Jaccard;
 use Rubix\ML\Kernels\Distance\Manhattan;
 use Rubix\ML\Kernels\Distance\Minkowski;
@@ -24,6 +25,7 @@ use Rubix\ML\Persisters\Filesystem;
 use Rubix\ML\Pipeline;
 use Rubix\ML\Transformers\IntervalDiscretizer;
 use Rubix\ML\Transformers\MaxAbsoluteScaler;
+use Rubix\ML\Transformers\MinMaxNormalizer;
 use Rubix\ML\Transformers\MissingDataImputer;
 use Rubix\ML\Transformers\NumericStringConverter;
 use Rubix\ML\Transformers\OneHotEncoder;
@@ -57,14 +59,14 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
     $data2      = $data;
 
     for ($i = 0, $iMax = count($data); $i < $iMax; $i++) {
-      $data[$i]['price_millions2'] = $data[$i]['price_millions'];
-      $data[$i]['rooms2'] = $data[$i]['rooms'];
-      $data[$i]['rooms3'] = $data[$i]['rooms'];
-      $data[$i]['rooms4'] = $data[$i]['rooms'];
-      $data[$i]['rooms5'] = $data[$i]['rooms'];
-      $data[$i]['rooms6'] = $data[$i]['rooms'];
-      $data[$i]['rooms7'] = $data[$i]['rooms'];
-      $data[$i]['rooms8'] = $data[$i]['rooms'];
+      $data[$i]['rr'] = $data[$i]['rooms'] * $data[$i]['rooms'];
+      $data[$i]['rrr'] = $data[$i]['rooms'] * $data[$i]['rooms'] * $data[$i]['rooms'];
+      $data[$i]['pp'] = $data[$i]['price_millions'] * $data[$i]['price_millions'];
+      $data[$i]['ppp'] = $data[$i]['price_millions'] * $data[$i]['price_millions'] * $data[$i]['price_millions'];
+      $data[$i]['p_t_r'] = $data[$i]['price_millions'] * $data[$i]['rooms'] ;
+      $data[$i]['p_t_rr'] = $data[$i]['price_millions'] * $data[$i]['rooms'] * $data[$i]['rooms'];
+      $data[$i]['pp_t_rr'] = $data[$i]['price_millions'] * $data[$i]['price_millions']  * $data[$i]['rooms'] * $data[$i]['rooms'];
+      $data[$i]['ppp_t_rrr'] = $data[$i]['price_millions'] * $data[$i]['price_millions'] * $data[$i]['price_millions']  * $data[$i]['rooms'] * $data[$i]['rooms'] * $data[$i]['rooms'];
 //      unset($data[$i]['zone_2_id']);
     }
 
@@ -76,12 +78,12 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
     RubixService::train(
         $data,
         data_index_w_label: null,
-        estimator_algorithm: new KMeans($nr_groups),
+        estimator_algorithm: new KMeans($nr_groups, kernel: new Gower(1)),
         transformers: [
             new MissingDataImputer(),
             new NumericStringConverter(),
             new OneHotEncoder(),
-            new MaxAbsoluteScaler(),
+            new MinMaxNormalizer(0,1),
 //            new ZScaleStandardizer(),
         ]
     );
