@@ -4,37 +4,9 @@
 namespace Torian257x\RubWrap\Service;
 
 
-use Rubix\ML\Classifiers\AdaBoost;
-use Rubix\ML\Classifiers\ClassificationTree;
-use Rubix\ML\Classifiers\DummyClassifier;
-use Rubix\ML\Classifiers\ExtraTreeClassifier;
-use Rubix\ML\Classifiers\GaussianNB;
-use Rubix\ML\Classifiers\KDNeighbors;
-use Rubix\ML\Classifiers\KNearestNeighbors;
-use Rubix\ML\Classifiers\LogisticRegression;
-use Rubix\ML\Classifiers\MultilayerPerceptron;
-use Rubix\ML\Classifiers\NaiveBayes;
-use Rubix\ML\Classifiers\RadiusNeighbors;
-use Rubix\ML\Classifiers\RandomForest;
-use Rubix\ML\Classifiers\SoftmaxClassifier;
-use Rubix\ML\Classifiers\SVC;
-use Rubix\ML\Clusterers\DBSCAN;
-use Rubix\ML\Clusterers\FuzzyCMeans;
-use Rubix\ML\Clusterers\GaussianMixture;
-use Rubix\ML\Clusterers\KMeans;
-use Rubix\ML\Clusterers\MeanShift;
+use PhpParser\Node\Expr\Instanceof_;
 use Rubix\ML\Estimator;
-use Rubix\ML\Regressors\Adaline;
-use Rubix\ML\Regressors\DummyRegressor;
-use Rubix\ML\Regressors\ExtraTreeRegressor;
-use Rubix\ML\Regressors\GradientBoost;
-use Rubix\ML\Regressors\KDNeighborsRegressor;
-use Rubix\ML\Regressors\KNNRegressor;
-use Rubix\ML\Regressors\MLPRegressor;
-use Rubix\ML\Regressors\RadiusNeighborsRegressor;
-use Rubix\ML\Regressors\RegressionTree;
-use Rubix\ML\Regressors\Ridge;
-use Rubix\ML\Regressors\SVR;
+use Rubix\ML\EstimatorType;
 
 class UtilityService
 {
@@ -65,55 +37,26 @@ class UtilityService
    */
   public static function getEstimatorType(Estimator $estimator)
   {
-    $classifier_supervised = [
-        AdaBoost::class,
-        ClassificationTree::class,
-        DummyClassifier::class,
-        ExtraTreeClassifier::class,
-        GaussianNB::class,
-        KDNeighbors::class,
-        KNearestNeighbors::class,
-        LogisticRegression::class,
-        MultilayerPerceptron::class,
-        NaiveBayes::class,
-        RadiusNeighbors::class,
-        RandomForest::class,
-        SoftmaxClassifier::class,
-        SVC::class,
-    ];
 
-    $clusterers = [
-        DBSCAN::class,
-        FuzzyCMeans::class,
-        GaussianMixture::class,
-        KMeans::class,
-        MeanShift::class,
-    ];
-
-    $regressors = [
-        Adaline::class,
-        DummyRegressor::class,
-        ExtraTreeRegressor::class,
-        GradientBoost::class,
-        KDNeighborsRegressor::class,
-        KNNRegressor::class,
-        MLPRegressor::class,
-        RadiusNeighborsRegressor::class,
-        RegressionTree::class,
-        Ridge::class,
-        SVR::class,
-
-    ];
-
-    if(in_array($estimator, $classifier_supervised)){
+    $type = $estimator->type()->code();
+    if($type === EstimatorType::CLASSIFIER){
       return 'classifier_supervised';
-    } else if (in_array($estimator, $clusterers)){
+    } else if ($type === EstimatorType::CLUSTERER){
       return 'clusterer';
-    } else if (in_array($estimator, $regressors)){
+    } else if ($type === EstimatorType::REGRESSOR){
       return 'regressor';
     } else{
       return null;
     }
+  }
+
+
+
+  public static function getRowsFromMultiDimArray(array $array, $key, $search_for_value)
+  {
+    return array_filter($array, function(array $val, $k) use($key, $search_for_value){
+      return $val[$key] === $search_for_value;
+    }, mode: ARRAY_FILTER_USE_BOTH);
   }
 
 }
