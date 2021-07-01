@@ -68,12 +68,12 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
     }, $data);
 
 
-    for ($i = 0, $iMax = count($data); $i < $iMax; $i++) {
-      $data[$i]['rr'] = $data[$i]['rooms']^2;
-      $data[$i]['pp'] = $data[$i]['price_millions']^2;
-      $data[$i]['p_t_r'] = $data[$i]['price_millions'] * $data[$i]['rooms'] ;
-      $data[$i]['p_t_lat'] = $data[$i]['price_millions'] * $data[$i]['geo_lat'] ;
-      $data[$i]['p_t_lng'] = $data[$i]['price_millions'] * $data[$i]['geo_lng'] ;
+    foreach ($data as $i => $row) {
+      $data[$i]['rr'] = $row['rooms']^2;
+      $data[$i]['pp'] = $row['price_millions']^2;
+      $data[$i]['p_t_r'] = $row['price_millions'] * $row['rooms'] ;
+      $data[$i]['p_t_lat'] = $row['price_millions'] * $row['geo_lat'] ;
+      $data[$i]['p_t_lng'] = $row['price_millions'] * $row['geo_lng'] ;
     }
 
 
@@ -94,6 +94,9 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
 
     $csv = new CSV(__DIR__ . '/output/cluster_output.csv', true);
     $csv->export(new \ArrayObject($data_w_cluster_nr));
+
+    $myclusters = array_column($data_w_cluster_nr, 'cluster_nr');
+    self::assertGreaterThan(1, sizeof($myclusters));
 
   }
 
