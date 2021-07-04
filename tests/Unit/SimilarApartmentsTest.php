@@ -17,8 +17,8 @@ use Rubix\ML\Transformers\ZScaleStandardizer;
 class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
 {
 
-  public function testGetSimilar()
-  {
+
+  public static function getData(){
     $data = new ColumnPicker(
         new CSV(__DIR__ . '/traininput/apartments_1k.csv', true),
         [
@@ -35,10 +35,7 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
 
     );
 
-
     $data = iterator_to_array($data->getIterator());
-    $data = array_slice($data, 0, 1000);
-
     $data = array_map(function($row){
 
       $wh = &$row['water_heating'];
@@ -75,6 +72,18 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
       $data[$i]['p_t_lat'] = $row['price_millions'] * $row['geo_lat'] ;
       $data[$i]['p_t_lng'] = $row['price_millions'] * $row['geo_lng'] ;
     }
+
+    return $data;
+  }
+
+  public function testGetSimilar()
+  {
+
+    $data = self::getData();
+
+
+
+    $data = array_slice($data, 0, 1000);
 
 
     $nr_groups = ceil(sqrt(count($data) / 2));

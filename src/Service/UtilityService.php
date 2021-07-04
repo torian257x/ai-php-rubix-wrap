@@ -10,6 +10,10 @@ use Rubix\ML\EstimatorType;
 
 class UtilityService
 {
+  const CLASSIFIER_SUPERVISED = 'classifier_supervised';
+  const CLUSTERER             = 'clusterer';
+  const REGRESSOR             = 'regressor';
+  const ANOMALITY             = 'anomality';
 
   /**
    * @param array<array> $array
@@ -40,11 +44,13 @@ class UtilityService
 
     $type = $estimator->type()->code();
     if($type === EstimatorType::CLASSIFIER){
-      return 'classifier_supervised';
+      return self::CLASSIFIER_SUPERVISED;
     } else if ($type === EstimatorType::CLUSTERER){
-      return 'clusterer';
+      return self::CLUSTERER;
     } else if ($type === EstimatorType::REGRESSOR){
-      return 'regressor';
+      return self::REGRESSOR;
+    } else if ($type === EstimatorType::ANOMALY_DETECTOR){
+      return self::ANOMALITY;
     } else{
       return null;
     }
