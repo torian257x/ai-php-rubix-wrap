@@ -3,7 +3,6 @@ composer.lock
 .idea
 *.cache
 *.rbx
-/src/config.php
 /visualize
 /data/ai_model/**
 /data/csv/**
