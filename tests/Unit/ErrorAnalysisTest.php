@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Torian257\RubWrap\Tests\Unit;
+namespace Torian257x\RubWrap\Tests\Unit;
 
 
 
-use Torian257\RubWrap\Service\RubixService;
+use Torian257x\RubWrap\Service\RubixService;
 use PHPUnit\Framework\TestCase;
 use Rubix\ML\Extractors\CSV;
 

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Torian257\RubWrap\Tests\Unit;
+namespace Torian257x\RubWrap\Tests\Unit;
 
 
 
-use Torian257\RubWrap\Service\RubixService;
+use Torian257x\RubWrap\Service\RubixService;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\PersistentModel;
 use Rubix\ML\Persisters\Filesystem;

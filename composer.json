@@ -1,5 +1,5 @@
 {
-  "name": "torian257/ai-php-rubix-wrap",
+  "name": "torian257x/ai-php-rubix-wrap",
   "type": "library",
   "description": "AI PHP is a wrapper for rubix ml",
   "keywords": ["ml","rubix","php","ai"],
@@ -13,12 +13,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "Torian257\\RubWrap\\": "src/"
+      "Torian257x\\RubWrap\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Torian257\\RubWrap\\Tests\\": "tests/"
+      "Torian257x\\RubWrap\\Tests\\": "tests/"
     }
   },
   "require-dev": {

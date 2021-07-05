@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Torian257\RubWrap\Service\DataFillers;
+namespace Torian257x\RubWrap\Service\DataFillers;
 
 
 use Rubix\ML\Estimator;

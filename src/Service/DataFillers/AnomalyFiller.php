@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Torian257\RubWrap\Service\DataFillers;
+namespace Torian257x\RubWrap\Service\DataFillers;
 
 
-use Torian257\RubWrap\Service\RubixService;
+use Torian257x\RubWrap\Service\RubixService;
 use Rubix\ML\AnomalyDetectors\Scoring;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Estimator;

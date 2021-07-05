@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Torian257\RubWrap\Tests\Unit;
+namespace Torian257x\RubWrap\Tests\Unit;
 
 
-use Torian257\RubWrap\Service\RubixService;
+use Torian257x\RubWrap\Service\RubixService;
 use Rubix\ML\Clusterers\KMeans;
 use Rubix\ML\Extractors\ColumnPicker;
 use Rubix\ML\Extractors\CSV;

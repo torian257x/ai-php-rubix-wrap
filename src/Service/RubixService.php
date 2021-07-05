@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Torian257\RubWrap\Service;
+namespace Torian257x\RubWrap\Service;
 
 
 use Exception;
-use Torian257\RubWrap\Service\DataFillers\AnomalyFiller;
-use Torian257\RubWrap\Service\DataFillers\ClustererFiller;
+use Torian257x\RubWrap\Service\DataFillers\AnomalyFiller;
+use Torian257x\RubWrap\Service\DataFillers\ClustererFiller;
 use Rubix\ML\Classifiers\KDNeighbors;
 use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\CrossValidation\Metrics\Informedness;
