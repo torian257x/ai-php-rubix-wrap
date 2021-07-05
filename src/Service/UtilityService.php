@@ -38,6 +38,7 @@ class UtilityService
    * classifier_supervised: find group with labeled samples e.g. cat and dog photos, define which one is which.
    * clusterer: find groups with unlabeled samples e.g. given 100 apartments, divide the apartments into groups that are similar to each other (space, rooms, cost etc)
    * regressor: given data, find a value. E.g. given an apartment with number of rooms, space, year it was built, location etc find out the price.
+   * anomality: given data, find values that are not normal
    */
   public static function getEstimatorType(Estimator $estimator)
   {
