@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Torian257x\RubWrap\Tests\Unit;
+namespace Torian257\RubWrap\Tests\Unit;
 
 
-use Torian257x\RubWrap\Service\RubixService;
+use Torian257\RubWrap\Service\RubixService;
 use Rubix\ML\AnomalyDetectors\GaussianMLE;
 use Rubix\ML\AnomalyDetectors\IsolationForest;
 use Rubix\ML\AnomalyDetectors\Loda;

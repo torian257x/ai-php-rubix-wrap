@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Torian257x\RubWrap\Tests\Unit;
+namespace Torian257\RubWrap\Tests\Unit;
 
 
 use Rubix\ML\Datasets\Unlabeled;

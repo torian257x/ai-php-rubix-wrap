@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Torian257x\RubWrap\Service;
+namespace Torian257\RubWrap\Service;
 
 
 use PhpParser\Node\Expr\Instanceof_;
