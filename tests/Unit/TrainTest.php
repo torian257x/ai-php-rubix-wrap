@@ -22,9 +22,11 @@ use Rubix\ML\Transformers\PolynomialExpander;
 class TrainTest extends \PHPUnit\Framework\TestCase
 {
 
-  public function testCanTrain()
+  /**
+   * @return array[]|bool
+   */
+  public static function trainIris(): mixed
   {
-
     $data = new ColumnPicker(
         new CSV(__DIR__ . '/traininput/bezdekiris.csv', true), [
             'sepal_length_cm',
@@ -35,9 +37,15 @@ class TrainTest extends \PHPUnit\Framework\TestCase
         ]
     );
 
-    $data = iterator_to_array($data->getIterator());
-//    RubixService::train($data->getIterator(), 'iris_plant_type');
+    $data       = iterator_to_array($data->getIterator());
     $is_trained = RubixService::train($data, 'iris_plant_type');
+    return $is_trained;
+  }
+
+  public function testCanTrain()
+  {
+
+    $is_trained = self::trainIris();
     self::assertTrue($is_trained);
 
   }

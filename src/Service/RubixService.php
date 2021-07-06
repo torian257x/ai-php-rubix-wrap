@@ -5,6 +5,7 @@ namespace Torian257x\RubWrap\Service;
 
 
 use Exception;
+use Rubix\ML\Transformers\MinMaxNormalizer;
 use Torian257x\RubWrap\Service\DataFillers\AnomalyFiller;
 use Torian257x\RubWrap\Service\DataFillers\ClustererFiller;
 use Rubix\ML\Classifiers\KDNeighbors;
@@ -66,7 +67,7 @@ class RubixService
       $transformers = [
           new NumericStringConverter(),
           new MissingDataImputer(),
-          new ZScaleStandardizer(),
+          new MinMaxNormalizer(),
       ];
     }
 
