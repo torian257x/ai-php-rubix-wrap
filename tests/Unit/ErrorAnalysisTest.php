@@ -15,7 +15,7 @@ class ErrorAnalysisTest extends TestCase
   public function testCanAnalyzeError()
   {
 
-    TrainTest::trainIris();
+    IrisTrainTest::trainIris();
 
     $data = new CSV(__DIR__ . '/traininput/bezdekiris.csv', true);
     $data = iterator_to_array($data->getIterator());

@@ -19,13 +19,12 @@ use Rubix\ML\Transformers\NumericStringConverter;
 use Rubix\ML\Transformers\OneHotEncoder;
 use Rubix\ML\Transformers\PolynomialExpander;
 
-class TrainTest extends \PHPUnit\Framework\TestCase
+class IrisTrainTest extends \PHPUnit\Framework\TestCase
 {
-
   /**
-   * @return array[]|bool
+   * @return array
    */
-  public static function trainIris(): mixed
+  public static function getIrisData(): array
   {
     $data = new ColumnPicker(
         new CSV(__DIR__ . '/traininput/bezdekiris.csv', true), [
@@ -37,8 +36,19 @@ class TrainTest extends \PHPUnit\Framework\TestCase
         ]
     );
 
-    $data       = iterator_to_array($data->getIterator());
-    $is_trained = RubixService::train($data, 'iris_plant_type');
+    $data = iterator_to_array($data->getIterator());
+    return $data;
+  }
+
+  /**
+   * @return array[]|bool
+   */
+  public static function trainIris(): mixed
+  {
+    $data       = self::getIrisData();
+
+    $is_trained = RubixService::trainWithoutTest($data, 'iris_plant_type');
+
     return $is_trained;
   }
 

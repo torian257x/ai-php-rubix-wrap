@@ -16,7 +16,7 @@ class PredictTest extends \PHPUnit\Framework\TestCase
   public function testCanPredict()
   {
 
-    TrainTest::trainIris();
+    IrisTrainTest::trainIris();
 
     $data = [
           ['virginica', ["7.9","3.8","6.4","2"]], //he keys actually don't matter. The order is what matters

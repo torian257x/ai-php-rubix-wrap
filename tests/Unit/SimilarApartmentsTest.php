@@ -89,7 +89,7 @@ class SimilarApartmentsTest extends \PHPUnit\Framework\TestCase
     $nr_groups = ceil(sqrt(count($data) / 2));
 
 
-    $data_w_cluster_nr = RubixService::train(
+    $data_w_cluster_nr = RubixService::trainWithoutTest(
         $data,
         data_index_w_label: null,
         estimator_algorithm: new KMeans($nr_groups, kernel: new Manhattan()),

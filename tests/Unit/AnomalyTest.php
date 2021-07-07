@@ -24,7 +24,7 @@ class AnomalyTest extends \PHPUnit\Framework\TestCase
 
     $estimator = new GaussianMLE(contamination: 0.005);
 
-    $data = RubixService::train($data, null, $estimator);
+    $data = RubixService::trainWithoutTest($data, null, $estimator);
 
     $data = array_filter($data, function($row){
       return $row['anomaly'];

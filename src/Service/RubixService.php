@@ -6,6 +6,7 @@ namespace Torian257x\RubWrap\Service;
 
 use Exception;
 use Rubix\ML\Transformers\MinMaxNormalizer;
+use Torian257x\RubWrap\Exception\RubWrapException;
 use Torian257x\RubWrap\Service\DataFillers\AnomalyFiller;
 use Torian257x\RubWrap\Service\DataFillers\ClustererFiller;
 use Rubix\ML\Classifiers\KDNeighbors;
@@ -31,6 +32,43 @@ class RubixService
 {
 
 
+  public static function train( array $data,
+      mixed $data_index_w_label,
+      Estimator $estimator_algorithm = null,
+      array $transformers = null,
+      $model_filename = 'model_trained.rbx',
+      float $train_part_size = 0.7)
+  {
+
+    if($estimator_algorithm){
+      $et = $estimator_algorithm->type();
+
+      if(!$et->isRegressor() && !$et->isClassifier()){
+        throw new RubWrapException('To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results');
+      }
+    }
+
+    $data_size = sizeof($data);
+
+    if(!$data || !$data_size){
+      throw new RubWrapException('Invalid $data provided');
+    }
+
+
+    shuffle($data);
+
+    $train_size = ceil($data_size * $train_part_size);
+
+    $train_data = array_slice($data, 0, $train_size);
+    $test_data = array_slice($data, $train_size, sizeof($data) - 1);
+
+    static::trainWithoutTest($train_data, $data_index_w_label, $estimator_algorithm, $transformers, $model_filename);
+
+    $report = static::getErrorAnalysis($test_data, $data_index_w_label, $model_filename);
+
+    return $report;
+  }
+
   /**
    * @param array<array> $data make array iterable by doing $myiterable = new ArrayObject( ['a','b'] );
    * @param Estimator|null $estimator_algorithm
@@ -38,7 +76,7 @@ class RubixService
    * @param mixed $data_index_w_label the number/string of the index of the data to be trained
    * @return bool|array[] typically boolean whether the training was successful, otherwise in case of cluster returns $data with extra entry 'cluster_nr'
    */
-  public static function train(
+  public static function trainWithoutTest(
       array $data,
       mixed $data_index_w_label,
       Estimator $estimator_algorithm = null,
@@ -177,30 +215,38 @@ class RubixService
     }
 
     if(is_array($columns)){
+
       $data = new ColumnPicker(
-          new CSV(RubixService::getConfig()['csv_path_input'], true),
+          new CSV(RubixService::getConfig('csv_path_input'), true),
           $columns
-
       );
-    }else{
 
+    }else{
+      $data = new CSV(RubixService::getConfig('csv_path_input'), true);
     }
-    
+
+    return iterator_to_array($data);
   }
-  
+
+
   public static function toCsv(array $data, string $filename){
     if(!$filename){
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
-    $path = static::getConfig()['csv_path_output'];
+    $path = static::getConfig('csv_path_output');
     $csv = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
 
 
-  public static function getConfig(){
+  public static function getConfig(string $config_entry = null){
     $config = require(__DIR__ . '/../config.php');
+
+    if($config_entry){
+      return $config[$config_entry] ?? null;
+    }
+
     return $config;
   }
 }
