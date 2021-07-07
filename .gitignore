@@ -6,4 +6,4 @@ composer.lock
 /visualize
 /data/ai_model/**
 /data/csv/**
-/test/Unit/output/
+/test/Unit/output/**
