@@ -15,14 +15,14 @@ class ErrorAnalysisTest extends TestCase
   public function testCanAnalyzeError()
   {
 
+    TrainTest::trainIris();
+
     $data = new CSV(__DIR__ . '/traininput/bezdekiris.csv', true);
     $data = iterator_to_array($data->getIterator());
 
     $report = RubixService::getErrorAnalysis($data, 'iris_plant_type');
 
-
-    var_dump($report);
-    self::assertTrue(!!$report);
+    self::assertGreaterThan(0.9, $report['fbeta']);
   }
 
 }
