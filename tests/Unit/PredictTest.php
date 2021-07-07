@@ -17,6 +17,7 @@ class PredictTest extends \PHPUnit\Framework\TestCase
   {
 
     TrainTest::trainIris();
+
     $data = [
           ['virginica', ["7.9","3.8","6.4","2"]], //he keys actually don't matter. The order is what matters
           ['virginica', ['sepal_length_cm' => "5.9", 'sepal_width_cm' => "3.2", 'petal_length_cm' => "6", 'petal_width_cm' => "1.8"]],
