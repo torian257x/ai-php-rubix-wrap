@@ -30,17 +30,6 @@ $report = RubixService::train($apartment_data, 'price');
 
 ```
 
-This performs the training and testing. `train()` actually internally runs a 
-1. shuffle of `$data`
-2. train against 70% of `$data`
-3. test against 30% of `$data`
-
-You can change that behaviour by using the argument `train_part_size` e.g. if you want to train on 80%, and test on 20% you would do `RubixService::train(... train_part_size: 0.8)`.
-
-
-The `$report` contains the error analysis.
-
-A short excerpt would be:
 
 ```php
 var_export($report);
@@ -77,3 +66,13 @@ Now you can predict new apartment data like so:
 Per default it uses [K-d Neighbors](https://docs.rubixml.com/latest/classifiers/kd-neighbors.html) or [K-d Neighbors Regressor](https://docs.rubixml.com/latest/regressors/kd-neighbors-regressor.html)
 
 `RubixService::train()` takes as well [transformers](https://docs.rubixml.com/latest/preprocessing.html) 
+
+
+In detail `RubixService:train()` does
+
+1. shuffle of `$data`
+2. train against 70% of `$data`
+3. test against 30% of `$data`
+
+You can change that behaviour by using the argument `train_part_size` e.g. if you want to train on 80%, and test on 20% you would do `RubixService::train(... train_part_size: 0.8)`.
+
