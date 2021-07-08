@@ -70,3 +70,10 @@ Now you can predict new apartment data like so:
 
 
 
+`RubixService::train()` will use a default estimator (machine learning algorithm) depending on the data. If you want to choose a different estimator I recommend reading here
+
+[rubix ml choosing an estimator](https://docs.rubixml.com/latest/choosing-an-estimator.html)
+
+Per default it uses [K-d Neighbors](https://docs.rubixml.com/latest/classifiers/kd-neighbors.html) or [K-d Neighbors Regressor](https://docs.rubixml.com/latest/regressors/kd-neighbors-regressor.html)
+
+`RubixService::train()` takes as well [transformers](https://docs.rubixml.com/latest/preprocessing.html) 
