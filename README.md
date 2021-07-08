@@ -28,10 +28,6 @@ $apartment_data = [
 
 $report = RubixService::train($apartment_data, 'price');
 
-```
-
-
-```php
 var_export($report);
 
 /* 
@@ -42,26 +38,32 @@ var_export($report);
     ...
   )
 */ 
-```
 
-Mean absolute error is basically the actual error you can expect in average. So _in average_ if trying to predict an apartment given the space, you'd be off, in average, by 68.88$
-
-`r squared` on the other hand gives more of a feeling how good the algorithm is in %. A high r squared means it works well.
-
-Now you can predict new apartment data like so:
-
-```php
-    $prediction = RubixService::predict(['space_m2' => 250]);
-    //$prediciton 2440
+$prediction = RubixService::predict(['space_m2' => 250]);
+//$prediciton ~2440
+    
 ```
 
 [See full example of above code here](https://github.com/torian257x/ai-php-rubix-wrap/blob/master/tests/Unit/ReadmeExamplesTest.php)
 
 
+## Reports / Errors / Accuracy
+
+Mean absolute error is basically the actual error you can expect in average. So _in average_ if trying to predict an apartment given the space, you'd be off, in average, by 68.88$
+
+`r squared` on the other hand gives more of a feeling how good the algorithm is in %. A high r squared means it works well. For categorical features like `cat` or `dog` a [different report is returned](https://docs.rubixml.com/latest/cross-validation.html#classification-and-anomaly-detection)
+
+
+
+
+
+## Estimators / Machine Learning Algorithm
 
 `RubixService::train()` will use a default estimator (machine learning algorithm) depending on the data. If you want to choose a different estimator I recommend reading here
 
 [rubix ml choosing an estimator](https://docs.rubixml.com/latest/choosing-an-estimator.html)
+
+Notice: Neural network is called **Multilayer Perceptron** in Rubix.
 
 Per default it uses [K-d Neighbors](https://docs.rubixml.com/latest/classifiers/kd-neighbors.html) or [K-d Neighbors Regressor](https://docs.rubixml.com/latest/regressors/kd-neighbors-regressor.html)
 
