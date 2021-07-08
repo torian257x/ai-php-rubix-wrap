@@ -63,7 +63,7 @@ Mean absolute error is basically the actual error you can expect in average. So 
 
 [rubix ml choosing an estimator](https://docs.rubixml.com/latest/choosing-an-estimator.html)
 
-Notice: Neural network is called **Multilayer Perceptron** in Rubix.
+Notice: Neural network is called **Multilayer Perceptron** in Rubix. Linear regression is called **Ridge**.
 
 Per default it uses [K-d Neighbors](https://docs.rubixml.com/latest/classifiers/kd-neighbors.html) or [K-d Neighbors Regressor](https://docs.rubixml.com/latest/regressors/kd-neighbors-regressor.html)
 
