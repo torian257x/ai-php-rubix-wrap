@@ -5,7 +5,10 @@ namespace Torian257x\RubWrap\Service;
 
 
 use Exception;
+use Rubix\ML\DataType;
+use Rubix\ML\Regressors\KDNeighborsRegressor;
 use Rubix\ML\Transformers\MinMaxNormalizer;
+use Rubix\ML\Transformers\OneHotEncoder;
 use Torian257x\RubWrap\Exception\RubWrapException;
 use Torian257x\RubWrap\Service\DataFillers\AnomalyFiller;
 use Torian257x\RubWrap\Service\DataFillers\ClustererFiller;
@@ -32,25 +35,28 @@ class RubixService
 {
 
 
-  public static function train( array $data,
+  public static function train(
+      array $data,
       mixed $data_index_w_label,
       Estimator $estimator_algorithm = null,
       array $transformers = null,
       $model_filename = 'model_trained.rbx',
-      float $train_part_size = 0.7)
-  {
+      float $train_part_size = 0.7
+  ) {
 
-    if($estimator_algorithm){
+    if ($estimator_algorithm) {
       $et = $estimator_algorithm->type();
 
-      if(!$et->isRegressor() && !$et->isClassifier()){
-        throw new RubWrapException('To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results');
+      if (!$et->isRegressor() && !$et->isClassifier()) {
+        throw new RubWrapException(
+            'To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results'
+        );
       }
     }
 
     $data_size = sizeof($data);
 
-    if(!$data || !$data_size){
+    if (!$data || !$data_size) {
       throw new RubWrapException('Invalid $data provided');
     }
 
@@ -60,7 +66,7 @@ class RubixService
     $train_size = ceil($data_size * $train_part_size);
 
     $train_data = array_slice($data, 0, $train_size);
-    $test_data = array_slice($data, $train_size, sizeof($data) - 1);
+    $test_data  = array_slice($data, $train_size, sizeof($data) - 1);
 
     static::trainWithoutTest($train_data, $data_index_w_label, $estimator_algorithm, $transformers, $model_filename);
 
@@ -81,7 +87,7 @@ class RubixService
       mixed $data_index_w_label,
       Estimator $estimator_algorithm = null,
       array $transformers = null,
-     $model_filename = 'model_trained.rbx'
+      $model_filename = 'model_trained.rbx'
   ) {
     ini_set('memory_limit', '-1');
 
@@ -97,17 +103,58 @@ class RubixService
       $dataset = new Unlabeled($data);
     }
 
+
     if (is_null($estimator_algorithm)) {
-      $estimator_algorithm = new KDNeighbors();
+      $label0 = $labels[0];
+      $dt     = DataType::detect($label0);
+
+      $needs_regression = false;
+
+      if ($dt->isContinuous()) {
+        $needs_regression = true;
+      }
+
+      if ($needs_regression) {
+        $estimator_algorithm = new KDNeighborsRegressor();
+      } else {
+        $estimator_algorithm = new KDNeighbors();
+      }
     }
 
+
     if (is_null($transformers)) {
-      $transformers = [
-          new NumericStringConverter(),
-          new MissingDataImputer(),
-          new MinMaxNormalizer(),
-      ];
+
+      $samples = $dataset->samples();
+      $row1    = $samples[0];
+
+      $has_categorical = false;
+
+      foreach($row1 as $feat){
+        $dt = DataType::detect($feat);
+
+        if($dt->isCategorical()){
+          $has_categorical = true;
+          break;
+        }
+      }
+
+      $needs_ohe = false;
+
+      if($has_categorical){
+        $needs_ohe = true;
+      }
+
+
+      $transformers = array_filter(
+          [
+              new NumericStringConverter(),
+              new MissingDataImputer(),
+              $needs_ohe ? new OneHotEncoder() : false,
+              new MinMaxNormalizer(),
+          ]
+      );
     }
+
 
     $estimator = new PersistentModel(
         new Pipeline(
@@ -123,10 +170,10 @@ class RubixService
     $logger->info('Finished training');
 
     $estimatorType = UtilityService::getEstimatorType($estimator);
-    if ($estimatorType === UtilityService::CLUSTERER ) {
+    if ($estimatorType === UtilityService::CLUSTERER) {
       $data = ClustererFiller::predict($data, $estimator);
       return $data;
-    } elseif ($estimatorType === UtilityService::ANOMALITY){
+    } elseif ($estimatorType === UtilityService::ANOMALITY) {
       $data = AnomalyFiller::predict($data, $estimator);
       return $data;
     }
@@ -139,8 +186,11 @@ class RubixService
    * @param array[] $input_data 2 dimensional array WIHTOUT label (e.g. without the value you want to predict)
    * @return mixed[]
    */
-  public static function predict(array $input_data, Estimator $estimator = null, string $model_filename = 'model_trained.rbx'): array|int
-  {
+  public static function predict(
+      array $input_data,
+      Estimator $estimator = null,
+      string $model_filename = 'model_trained.rbx'
+  ): array|int {
 
     $is_single_dimensional_array = false;
     if (is_array($input_data) && !is_array($input_data[0] ?? null)) {
@@ -167,8 +217,11 @@ class RubixService
     }
   }
 
-  public static function getErrorAnalysis(array $samples_w_labels, $key_for_labels, $model_filename = 'model_trained.rbx')
-  {
+  public static function getErrorAnalysis(
+      array $samples_w_labels,
+      $key_for_labels,
+      $model_filename = 'model_trained.rbx'
+  ) {
 
     [$samples, $labels] = UtilityService::getLabelsFromSamples($samples_w_labels, $key_for_labels);
 
@@ -205,23 +258,25 @@ class RubixService
 
   }
 
-  public static function getEstimatorFromFilesystem(string $model_filename = 'model_trained.rbx'): Estimator{
+  public static function getEstimatorFromFilesystem(string $model_filename = 'model_trained.rbx'): Estimator
+  {
     return PersistentModel::load(new Filesystem(RubixService::getConfig()['ai_model_path_output'] . $model_filename));
   }
 
-  public static function fromCsv(string $filename, ?array $columns = null){
-    if(!$filename){
+  public static function fromCsv(string $filename, ?array $columns = null)
+  {
+    if (!$filename) {
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
-    if(is_array($columns)){
+    if (is_array($columns)) {
 
       $data = new ColumnPicker(
           new CSV(RubixService::getConfig('csv_path_input'), true),
           $columns
       );
 
-    }else{
+    } else {
       $data = new CSV(RubixService::getConfig('csv_path_input'), true);
     }
 
@@ -229,21 +284,23 @@ class RubixService
   }
 
 
-  public static function toCsv(array $data, string $filename){
-    if(!$filename){
+  public static function toCsv(array $data, string $filename)
+  {
+    if (!$filename) {
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
     $path = static::getConfig('csv_path_output');
-    $csv = new CSV($path . $filename, true);
+    $csv  = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
 
 
-  public static function getConfig(string $config_entry = null){
+  public static function getConfig(string $config_entry = null)
+  {
     $config = require(__DIR__ . '/../config.php');
 
-    if($config_entry){
+    if ($config_entry) {
       return $config[$config_entry] ?? null;
     }
 
