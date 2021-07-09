@@ -26,7 +26,6 @@
   },
   "require": {
     "php": ">=8.0",
-    "rubix/ml": "^1.0",
-    "rubix/extras": "^1.0"
+    "rubix/ml": "^1.0"
   }
 }
