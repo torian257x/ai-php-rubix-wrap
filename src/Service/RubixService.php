@@ -298,7 +298,7 @@ class RubixService
 
   public static function getConfig(string $config_entry = null)
   {
-    $config = require(__DIR__ . '/../config.php');
+    $config = require(__DIR__ . '/../rubwrap.php');
 
     if ($config_entry) {
       return $config[$config_entry] ?? null;
