@@ -10,7 +10,7 @@ use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\PersistentModel;
 use Rubix\ML\Persisters\Filesystem;
 
-class PredictTest extends \PHPUnit\Framework\TestCase
+class IrisPredictTest extends \PHPUnit\Framework\TestCase
 {
 
   public function testCanPredict()
