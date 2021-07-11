@@ -66,4 +66,17 @@ class UtilityService
     }, mode: ARRAY_FILTER_USE_BOTH);
   }
 
+
+  public static function createIfNotExistsFolder(string $path)
+  {
+    if (is_dir($path)) {
+        return;
+    }
+
+    if (!mkdir($path, 0777, true) && !is_dir($path)) {
+        throw new \RuntimeException(sprintf('RubixAI Error: Directory "%s" was not created', $path));
+    }
+
+  }
+
 }

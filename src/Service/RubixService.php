@@ -156,12 +156,15 @@ class RubixService
     }
 
 
-    $estimator = new PersistentModel(
+      $output_path = RubixService::getConfig()['ai_model_path_output'];
+      UtilityService::createIfNotExistsFolder($output_path);
+
+      $estimator            = new PersistentModel(
         new Pipeline(
             $transformers
             , $estimator_algorithm
         ),
-        new Filesystem(RubixService::getConfig()['ai_model_path_output'] . $model_filename)
+        new Filesystem($output_path . $model_filename)
     );
 
     $estimator->train($dataset);
