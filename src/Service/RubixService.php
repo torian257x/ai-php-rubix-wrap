@@ -10,8 +10,8 @@ use Rubix\ML\Regressors\KDNeighborsRegressor;
 use Rubix\ML\Transformers\MinMaxNormalizer;
 use Rubix\ML\Transformers\OneHotEncoder;
 use Torian257x\RubWrap\Exception\RubWrapException;
-use Torian257x\RubWrap\Service\DataFillers\AnomalyFiller;
-use Torian257x\RubWrap\Service\DataFillers\ClustererFiller;
+use Torian257x\RubWrap\Service\ResultFillers\AnomalyFiller;
+use Torian257x\RubWrap\Service\ResultFillers\ClustererFiller;
 use Rubix\ML\Classifiers\KDNeighbors;
 use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\CrossValidation\Metrics\Informedness;
@@ -29,7 +29,6 @@ use Rubix\ML\Pipeline;
 use Rubix\ML\Transformers\MissingDataImputer;
 use Rubix\ML\Transformers\NumericStringConverter;
 use Rubix\ML\Transformers\Transformer;
-use Rubix\ML\Transformers\ZScaleStandardizer;
 
 class RubixService
 {
@@ -44,35 +43,49 @@ class RubixService
       float $train_part_size = 0.7
   ) {
 
-    if ($estimator_algorithm) {
-      $et = $estimator_algorithm->type();
+    $is_testable = false;
+    if (is_null($estimator_algorithm)) {
+      $is_testable = true;
+    } else {
+      if ($estimator_algorithm) {
+        $et = $estimator_algorithm->type();
 
-      if (!$et->isRegressor() && !$et->isClassifier()) {
-        throw new RubWrapException(
-            'Call ->trainWithoutTest() instead. To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results.'
-        );
+        if ($et->isRegressor() || $et->isClassifier()) {
+          $is_testable = true;
+        }
       }
     }
 
-    $data_size = sizeof($data);
+    if ($is_testable) {
+      $data_size = sizeof($data);
 
-    if (!$data || !$data_size) {
-      throw new RubWrapException('Invalid $data provided');
+      if (!$data || !$data_size) {
+        throw new RubWrapException('Invalid $data provided');
+      }
+
+
+      shuffle($data);
+
+      $train_size = ceil($data_size * $train_part_size);
+
+      $train_data = array_slice($data, 0, $train_size);
+      $test_data  = array_slice($data, $train_size, sizeof($data) - 1);
+
+      static::trainWithoutTest($train_data, $data_index_w_label, $estimator_algorithm, $transformers, $model_filename);
+
+      $report = static::getErrorAnalysis($test_data, $data_index_w_label, $model_filename);
+      return $report;
+    } else {
+      //clusterer or anomaly estimator, returning data that is enriched with scores, clusters, and anomality rating
+      $return_data = static::trainWithoutTest(
+          $data,
+          $data_index_w_label,
+          $estimator_algorithm,
+          $transformers,
+          $model_filename
+      );
+      return $return_data;
     }
-
-
-    shuffle($data);
-
-    $train_size = ceil($data_size * $train_part_size);
-
-    $train_data = array_slice($data, 0, $train_size);
-    $test_data  = array_slice($data, $train_size, sizeof($data) - 1);
-
-    static::trainWithoutTest($train_data, $data_index_w_label, $estimator_algorithm, $transformers, $model_filename);
-
-    $report = static::getErrorAnalysis($test_data, $data_index_w_label, $model_filename);
-
-    return $report;
   }
 
   /**
@@ -155,7 +168,7 @@ class RubixService
     }
 
 
-      $output_path = RubixService::getConfig()['ai_model_path_output'];
+      $output_path = rubixai_getconfig()['ai_model_path_output'];
       UtilityService::createIfNotExistsFolder($output_path);
 
       $estimator            = new PersistentModel(
@@ -262,7 +275,7 @@ class RubixService
 
   public static function getEstimatorFromFilesystem(string $model_filename = 'model_trained.rbx'): Estimator
   {
-    return PersistentModel::load(new Filesystem(RubixService::getConfig()['ai_model_path_output'] . $model_filename));
+    return PersistentModel::load(new Filesystem( rubixai_getconfig('ai_model_path_output') . $model_filename));
   }
 
   public static function fromCsv(string $filename, ?array $columns = null)
@@ -274,12 +287,12 @@ class RubixService
     if (is_array($columns)) {
 
       $data = new ColumnPicker(
-          new CSV(RubixService::getConfig('csv_path_input'), true),
+          new CSV(rubixai_getconfig('csv_path_input'), true),
           $columns
       );
 
     } else {
-      $data = new CSV(RubixService::getConfig('csv_path_input'), true);
+      $data = new CSV(rubixai_getconfig('csv_path_input'), true);
     }
 
     return iterator_to_array($data);
@@ -292,21 +305,10 @@ class RubixService
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
-    $path = static::getConfig("csv_path_output");
+    $path = rubixai_getconfig("csv_path_output");
     UtilityService::createIfNotExistsFolder($path);
     $csv  = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
 
-
-  public static function getConfig(string $config_entry = null)
-  {
-    $config = require(__DIR__ . '/../rubwrap_config.php');
-
-    if ($config_entry) {
-      return $config[$config_entry] ?? null;
-    }
-
-    return $config;
-  }
 }

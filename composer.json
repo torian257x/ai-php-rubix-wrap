@@ -12,6 +12,9 @@
     }
   ],
   "autoload": {
+    "files": [
+      "src/rubixai_getconfig.php"
+    ],
     "psr-4": {
       "Torian257x\\RubWrap\\": "src/"
     }

@@ -12,7 +12,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
   public function testConfig()
   {
 
-    $config = RubixService::getConfig();
+    $config = rubixai_getconfig();
 
     self::assertNotEmpty($config['csv_path_output']);
 
@@ -20,10 +20,10 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
   public function testConfigParam(){
 
-    $config_path = RubixService::getConfig('csv_path_output');
+    $config_path = rubixai_getconfig('csv_path_output');
     self::assertNotEmpty($config_path);
 
-    $config_shouldbenull = RubixService::getConfig('csv_path_outputasdfasdfasdfdasf');
+    $config_shouldbenull = rubixai_getconfig('csv_path_outputasdfasdfasdfdasf');
     self::assertNull($config_shouldbenull);
 
   }

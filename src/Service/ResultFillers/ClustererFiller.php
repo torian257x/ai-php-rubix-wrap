@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Torian257x\RubWrap\Service\DataFillers;
+namespace Torian257x\RubWrap\Service\ResultFillers;
 
 
 use Torian257x\RubWrap\Service\RubixService;
 use Rubix\ML\Estimator;
 
-class ClustererFiller implements DataFiller
+class ClustererFiller implements ResultFiller
 {
 
   public static function predict(array $data, Estimator $estimator): array
