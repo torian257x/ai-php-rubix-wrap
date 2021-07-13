@@ -37,7 +37,7 @@ class RubixService
 
   public static function train(
       array $data,
-      mixed $data_index_w_label,
+      mixed $data_index_w_label = null,
       Estimator $estimator_algorithm = null,
       array $transformers = null,
       $model_filename = 'model_trained.rbx',
@@ -84,7 +84,7 @@ class RubixService
    */
   public static function trainWithoutTest(
       array $data,
-      mixed $data_index_w_label,
+      mixed $data_index_w_label = null,
       Estimator $estimator_algorithm = null,
       array $transformers = null,
       $model_filename = 'model_trained.rbx'

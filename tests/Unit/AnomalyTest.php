@@ -19,7 +19,7 @@ class AnomalyTest extends \PHPUnit\Framework\TestCase
   public function testCanFindAnomalies()
   {
 
-    $data = ReadmeExamplesTest::getData();
+    $data = SimilarApartmentsTest::getData();
 
 
     $estimator = new GaussianMLE(contamination: 0.005);
