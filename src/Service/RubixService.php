@@ -293,6 +293,7 @@ class RubixService
     }
 
     $path = static::getConfig("csv_path_output");
+    UtilityService::createIfNotExistsFolder($path);
     $csv  = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
