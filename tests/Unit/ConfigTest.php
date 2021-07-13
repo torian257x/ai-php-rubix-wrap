@@ -26,6 +26,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     $config_shouldbenull = rubixai_getconfig('csv_path_outputasdfasdfasdfdasf');
     self::assertNull($config_shouldbenull);
 
+    $rubixClass = rubixai_getconfig('RubixMainClass');
+    self::assertTrue( $rubixClass === RubixService::class);
+
   }
 
 
