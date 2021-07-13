@@ -292,7 +292,7 @@ class RubixService
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
-    $path = self::getConfig("csv_path_output");
+    $path = static::getConfig("csv_path_output");
     $csv  = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
