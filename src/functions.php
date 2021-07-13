@@ -1,7 +1,8 @@
 <?php
 
-if(!function_exists('rubixai_getconfig')){
-  function rubixai_getconfig(string $config_entry = null){
+if (!function_exists('rubixai_getconfig')) {
+  function rubixai_getconfig(string $config_entry = null)
+  {
     $config = require(__DIR__ . '/rubwrap_config.php');
 
     if ($config_entry) {
@@ -9,8 +10,5 @@ if(!function_exists('rubixai_getconfig')){
     }
 
     return $config;
-
   }
 }
-
-
