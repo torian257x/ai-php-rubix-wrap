@@ -49,7 +49,7 @@ class RubixService
 
       if (!$et->isRegressor() && !$et->isClassifier()) {
         throw new RubWrapException(
-            'To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results'
+            'Call ->trainWithoutTest() instead. To train with testing, you need to provide an estimator that is a regressor or classifier, otherwise you cannot really cross validate the results.'
         );
       }
     }
@@ -94,7 +94,6 @@ class RubixService
     $logger = new Screen("TrainData");
 
     $logger->info('Starting to train');
-
 
     if ($data_index_w_label) {
       [$samples, $labels] = UtilityService::getLabelsFromSamples($data, $data_index_w_label);
@@ -293,7 +292,7 @@ class RubixService
       throw new Exception('Filename cannot be null or empty or fasly');
     }
 
-    $path = static::getConfig('csv_path_output');
+    $path = self::getConfig("csv_path_output");
     $csv  = new CSV($path . $filename, true);
     $csv->export(new \ArrayObject($data));
   }
