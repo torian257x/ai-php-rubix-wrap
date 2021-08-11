@@ -5,7 +5,7 @@ if (!function_exists('rubixai_getconfig')) {
   {
 
     if(defined('RUBIXAI_CUSTOM_CONFIG')){
-      $config = RUBIXAI_CUSTOM_CONFIG;
+      $config = \RUBIXAI_CUSTOM_CONFIG;
     }else{
       $config = require(__DIR__ . '/rubwrap_config.php');
     }
