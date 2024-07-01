@@ -103,38 +103,7 @@ class RubixService
             $dataset = new Unlabeled($data);
         }
 
-        if (is_null($transformers)) {
-
-            $samples = $dataset->samples();
-            $row1    = $samples[0];
-
-            $has_categorical = false;
-
-            foreach($row1 as $feat){
-                $dt = DataType::detect($feat);
-
-                if($dt->isCategorical()){
-                    $has_categorical = true;
-                    break;
-                }
-            }
-
-            $needs_ohe = false;
-
-            if($has_categorical){
-                $needs_ohe = true;
-            }
-
-
-            $transformers = array_filter(
-                [
-                    new NumericStringConverter(),
-                    new MissingDataImputer(),
-                    $needs_ohe ? new OneHotEncoder() : false,
-                    new MinMaxNormalizer(),
-                ]
-            );
-        }
+        $transformers = self::getTransformers($transformers, $dataset);
 
 
         $output_path = rubixai_getconfig()['ai_model_path_output'];
@@ -304,6 +273,34 @@ class RubixService
             return new KDNeighborsRegressor();
         }
         return new KDNeighbors();
+    }
+
+    private static function getTransformers(?array $transformers, Unlabeled|Labeled $dataset): array
+    {
+        if ($transformers) {
+            return $transformers;
+        }
+
+        $samples = $dataset->samples();
+        $row1 = $samples[0];
+
+        foreach ($row1 as $feat) {
+
+            if (DataType::detect($feat)->isCategorical()) {
+                return [
+                    new NumericStringConverter(),
+                    new MissingDataImputer(),
+                    new OneHotEncoder(),
+                    new MinMaxNormalizer(),
+                ];
+            }
+        }
+
+        return [
+            new NumericStringConverter(),
+            new MissingDataImputer(),
+            new MinMaxNormalizer(),
+        ];
     }
 
 }
